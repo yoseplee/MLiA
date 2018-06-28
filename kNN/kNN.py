@@ -41,6 +41,18 @@ def file2matrix(filename):
     return returnMat, classLabelVector
 
 
+# normalization -> 모든 값을 0~1사이로 변환하여 각 값이 가지는 가중 요소를 정제하는 것
+def autoNorm(dataSet):
+    minVals = dataSet.min(0)
+    maxVals = dataSet.max(0)
+    ranges = maxVals - minVals
+    normDataSet = zeros(shape(dataSet))
+    m = dataSet.shape[0] # nCols of the dataSet
+    normDataSet = dataSet - tile(minVals, (m,1))
+    normDataSet = normDataSet/tile(ranges, (m,1)) # element-wise division
+    return normDataSet, ranges, minVals
+
+
 
 
 # *********additional functions********* #
