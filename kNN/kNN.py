@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# 2018-06-29
+# Machine Learning in action / kNN
+# page ~33
+
 from numpy import *
 import operator
 
@@ -27,7 +31,7 @@ def file2matrix(filename):
     fr = open(filename)
     numberOfLines = len(fr.readlines())
     numberOfCols = getnTab(filename)
-    returnMat = zeros((numberOfLines, numberOfCols)) #조금더 adaptive하게 만들 수 있다. 방법은?
+    returnMat = zeros((numberOfLines, numberOfCols)) #조금더 adaptive하게 만들 수 있다. -> getTam(filename)
     classLabelVector = []
     fr = open(filename)
     index = 0
@@ -35,11 +39,10 @@ def file2matrix(filename):
         line = line.strip()
         listFromLine = line.split('\t')
         returnMat[index, :] = listFromLine[0:3]
-        # classLabelVector.append(int(listFromLine[-1])) # in case using(coded) 'datingTestSet2.txt'
-        classLabelVector.append(listFromLine[-1])
+        classLabelVector.append(int(listFromLine[-1])) # in case using(coded) 'datingTestSet2.txt'
+        # classLabelVector.append(listFromLine[-1])
         index += 1
     return returnMat, classLabelVector
-
 
 # normalization -> 모든 값을 0~1사이로 변환하여 각 값이 가지는 가중 요소를 정제하는 것
 def autoNorm(dataSet):
@@ -52,7 +55,30 @@ def autoNorm(dataSet):
     normDataSet = normDataSet/tile(ranges, (m,1)) # element-wise division
     return normDataSet, ranges, minVals
 
+def datingClassTest():
+    hoRatio = 0.10
+    datingDataMat, datingLabels = file2matrix('datingTestSet2.txt')
+    normMat, ranges, minVals = autoNorm(datingDataMat)
+    m = normMat.shape[0]
+    numTestVecs = int(m*hoRatio)
+    errorCount = 0.0
+    for i in range(numTestVecs):
+        #classify0(data that to classify, test data set, labels, n neighbors)
+        classfierResult = classify0(normMat[i, :], normMat[numTestVecs:m, :], datingLabels[numTestVecs:m], 3)
+        print("the classifier came back with: %s, the real answer is: %s" % (classfierResult, datingLabels[i]))
+        if(classfierResult != datingLabels[i]): errorCount += 1.0
+    print("the total error rate is: %f" % (errorCount/float(numTestVecs)))
 
+def classifyPerson():
+    resultList = ['not at all', 'in small doses', 'in large doses']
+    percenstTats = float(raw_input("Percentage of time spent playing video games?"))
+    ffMiles = float(raw_input("frequent flier miles earned per year?"))
+    iceCream = float(raw_input("liters of ice cream consumed per year?"))
+    datingDataMat, datingLabels = file2matrix('datingTestSet2.txt')
+    normMat, ranges, minVals = autoNorm(datingDataMat)
+    inArr = array([ffMiles, percenstTats, iceCream])
+    classifierResult = classify0((inArr-minVals)/ranges, normMat, datingLabels, 3)
+    print "You will probably like this person: ", resultList[classifierResult - 1]
 
 
 # *********additional functions********* #
