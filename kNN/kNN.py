@@ -5,6 +5,7 @@
 
 from numpy import *
 import operator
+from os import listdir  # to see the names of files in a given directory
 
 def createDataSet():
     group = array([[1.0,1.1], [1.0,1.0], [0,0], [0,0.1]])
@@ -80,6 +81,41 @@ def classifyPerson():
     classifierResult = classify0((inArr-minVals)/ranges, normMat, datingLabels, 3)
     print "You will probably like this person: ", resultList[classifierResult - 1]
 
+# For example of handwritting recognition system
+def img2vector(filename):
+    returnVect = zeros((1,1024))
+    fr = open(filename)
+    for i in range(32):
+        lineStr = fr.readline()                     #000000000111100000... for 32 digits
+        for j in range(32):
+            returnVect[0,32*i+j] = int(lineStr[j])  #because returnVec has single rows, its idx is 0.
+    return returnVect
+
+def handwrittingClassTest():
+    dirName = 'digits/testDigits'
+    hwLabels = []
+    trainingFileList = listdir(dirName)
+    m = len(trainingFileList)
+    trainingMat = zeros((m,1024))
+    for i in range(m):
+        fileNameStr = trainingFileList[i]
+        fileStr = fileNameStr.split('.')[0]
+        classNumStr = int(fileStr.split('_')[0])
+        hwLabels.append(classNumStr)
+        trainingMat[i,:] = img2vector('%s/%s' % (dirName, fileNameStr))
+    testFileList = listdir(dirName)
+    errorCount = 0.0
+    mTest = len(testFileList)
+    for i in range(mTest):
+        fileNameStr = testFileList[i]
+        fileStr = fileNameStr.split('.')[0]
+        classNumStr = int(fileStr.split('_')[0])
+        vectorUnderTest = img2vector('%s/%s' % (dirName, fileNameStr))
+        classifierResult = classify0(vectorUnderTest, trainingMat, hwLabels, 3)
+        print "the classifier came back with: %d, the real answer is: %d" % (classifierResult, classNumStr)
+        if(classifierResult != classNumStr): errorCount += 1.0
+    print "\nthe total number of error is: %d" % errorCount
+    print "\nthe total error rate is: %f" % (errorCount/float(mTest))
 
 # *********additional functions********* #
 
