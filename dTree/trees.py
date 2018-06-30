@@ -37,15 +37,15 @@ def splitDataSet(dataSet, axis, value):
 
 def chooseBestFeatureToSplit(dataSet): #dataset type is python list
     numFeatures = len(dataSet[0]) -1    #because index starts from 0, but len() returns the number of cols
-    baseEntropy = calcShannonEnt(dataSet)
+    baseEntropy = calcShannonEnt(dataSet)   #calculate entropy based on yes or no
     bestInfoGain = 0.0; bestFeature = -1
     for i in range(numFeatures):
-        featList = [example[i] for example in dataSet]
-        uniqueVals = set(featList)
+        featList = [example[i] for example in dataSet] #get all rows for i-th column
+        uniqueVals = set(featList)  # remove all duplicates
         newEntropy = 0.0
         for value in uniqueVals:
             subDataSet = splitDataSet(dataSet, i, value)
-            prob = len(subDataSet)/float(len(dataSet))
+            prob = len(subDataSet)/float(len(dataSet)) # for this variable prob, it means ratio: n(subDataSet) / nAll
             newEntropy += prob * calcShannonEnt(subDataSet)
         infoGain = baseEntropy - newEntropy
         if(infoGain > bestInfoGain):
