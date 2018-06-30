@@ -92,9 +92,10 @@ def img2vector(filename):
     return returnVect
 
 def handwrittingClassTest():
-    dirName = 'digits/testDigits'
+    trainingDir = 'digits/trainingDigits'
+    testDir = 'digits/testDigits'
     hwLabels = []
-    trainingFileList = listdir(dirName)
+    trainingFileList = listdir(trainingDir)
     m = len(trainingFileList)
     trainingMat = zeros((m,1024))
     for i in range(m):
@@ -102,15 +103,15 @@ def handwrittingClassTest():
         fileStr = fileNameStr.split('.')[0]
         classNumStr = int(fileStr.split('_')[0])
         hwLabels.append(classNumStr)
-        trainingMat[i,:] = img2vector('%s/%s' % (dirName, fileNameStr))
-    testFileList = listdir(dirName)
+        trainingMat[i,:] = img2vector('%s/%s' % (trainingDir, fileNameStr))
+    testFileList = listdir(testDir)
     errorCount = 0.0
     mTest = len(testFileList)
     for i in range(mTest):
         fileNameStr = testFileList[i]
         fileStr = fileNameStr.split('.')[0]
         classNumStr = int(fileStr.split('_')[0])
-        vectorUnderTest = img2vector('%s/%s' % (dirName, fileNameStr))
+        vectorUnderTest = img2vector('%s/%s' % (testDir, fileNameStr))
         classifierResult = classify0(vectorUnderTest, trainingMat, hwLabels, 3)
         print "the classifier came back with: %d, the real answer is: %d" % (classifierResult, classNumStr)
         if(classifierResult != classNumStr): errorCount += 1.0
@@ -119,6 +120,12 @@ def handwrittingClassTest():
 
 # *********additional functions********* #
 
+# for parsing digit information from filename
+def getDigitInfo(fileNameStr):
+    #E.g. 1_11.txt
+    fileStr = fileNameStr.split('.')[0]         #1_11 txt // [0] is 1_11
+    classNumStr = int(fileStr.split('_')[0])    #1 11 // [0] is 1... it's about digit 1
+    return fileStr, classNumStr
 
 # from data file(text) seperated by \t, count the number of tabs in a single line.
 def getnTab(filename):
