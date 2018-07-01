@@ -5,6 +5,7 @@
 # 2018.06.30
 
 from math import log
+import operator
 
 def calcShannonEnt(dataSet):    #dataSet type is python list
     numEntries = len(dataSet)
@@ -52,3 +53,11 @@ def chooseBestFeatureToSplit(dataSet): #dataset type is python list
             bestInfoGain = infoGain
             bestFeature = i
     return bestFeature
+
+def majorityCnt(classList):
+    classCount = {}
+    for vote in classList:
+        if vote not in classCount.keys(): classCount[vote] = 0
+        classCount[vote] += 1
+    sortedClassCount = sorted(classCount.iteritems(), key=operator.itemgetter(1), reverse=True)
+    return sortedClassCount[0][0]
