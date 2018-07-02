@@ -55,9 +55,28 @@ def chooseBestFeatureToSplit(dataSet): #dataset type is python list
     return bestFeature
 
 def majorityCnt(classList):
+    #count for labels, returns the most
+    # the object of the dictionary(classCount) is the frequency of occurrence of each class label from classList
     classCount = {}
     for vote in classList:
         if vote not in classCount.keys(): classCount[vote] = 0
         classCount[vote] += 1
     sortedClassCount = sorted(classCount.iteritems(), key=operator.itemgetter(1), reverse=True)
     return sortedClassCount[0][0]
+
+def createTree(dataSet, labels):
+    classList = [example[-1] for example in dataSet]
+    if classList.count(classList[0]) == len(classList): # stop when all classes are equal
+        return classList[0]
+    if len(dataSet[0]) == 1:        # when no more features, return majority
+        return majorityCnt(classList)
+    bestFeat = chooseBestFeatureToSplit(dataSet)
+    bestFeatLabel = labels[bestFeat]
+    myTree = {bestFeatLabel:{}}
+    del(labels[bestFeat])   # delete labels which jobs are done
+    featValues = [example[bestFeat] for example in dataSet]
+    uniqueVals = set(featValues)
+    for value in uniqueVals:
+        subLabels = labels[:]   #assign all remained labels to subLabels so that calculate without that label
+        myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet, bestFeat, value), subLabels) # with the bestFeatLabel substracted dataset and labels, create new one
+    return myTree
