@@ -12,6 +12,7 @@ def plotNode(nodeTxt, centerPt, parentPt, nodeType):
              va="center", ha="center", bbox=nodeType, arrowprops=arrow_args )
 
 def createPlot():
+    #to test plotter.
    fig = plt.figure(1, facecolor='white')
    fig.clf()
    createPlot.ax1 = plt.subplot(111, frameon=False) #ticks for demo puropses
