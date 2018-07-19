@@ -1,45 +1,29 @@
-# 2018.07.07 Naive bayes
-from numpy import *
+#2018.07.19 naive bayes
 
 def loadDataSet():
-    postingList = [
-        ['my', 'dog', 'has', 'flea', 'problems', 'help', 'please'],
-        ['maybe', 'not', 'take', 'him', 'to', 'dog', 'park', 'stupid'],
-        ['my', 'dalmation', 'is', 'so', 'cute', 'I', 'love', 'him'],
-        ['stop', 'posting', 'stupid', 'worthless', 'garbage'],
-        ['mr', 'licks', 'ate', 'my', 'stake', 'how', 'to', 'stop', 'him'],
-        ['quit', 'buying', 'worthless', 'dog', 'food', 'stupid']
-    ]
-    classVec = [0,1,0,1,0,1] # 1 is abusive, 0 not
+    postingList = [['my', 'dog', 'has', 'flea', 'problems', 'help', 'please'],
+                   ['maybe', 'not', 'take', 'him', 'to', 'dog', 'park', 'stupid'],
+                   ['my', 'dalmatian', 'is', 'so', 'cute', 'I', 'love', 'him'],
+                   ['stop', 'posting', 'stupid', 'worthless', 'garbage'],
+                   ['mr', 'licks', 'ate', 'my', 'steak', 'how', 'to', 'stop', 'him'],
+                   ['quit', 'buying', 'worhless', 'dog', 'food', 'stupid']]
+    classVec = [0,1,0,1,0,1] #1 is abusive, 0 is not
     return postingList, classVec
 
 def createVocabList(dataSet):
-    vocabSet = set([])
+    #create a list of all the unique words in all of our documents
+    vocabSet = set([])              #create empty set
     for document in dataSet:
-        vocabSet = vocabSet | set(document)
+        print("create the union of two sets:: " + document)
+        vocabSet = vocabSet | set(document)     # create the union of two sets
     return list(vocabSet)
 
 def setOfWords2Vec(vocabList, inputSet):
-    returnVec = [0]*len(vocabList)
+    #takes vocab list and a document and outputs a vector of 1s and 0s to represent
+    #whether a word from our vocab is present or not in the given document
+    returnVec = [0]*len(vocabList)      #create a vector of all 0s
     for word in inputSet:
-        if word in vocabList:
+        if word in vocabList:           #if there is that word in vocablist, than flag it
             returnVec[vocabList.index(word)] = 1
-        else : print "the word: %s is not in my Vocabulary!" % word
+        else: print "the word: %s is not in my Vocabulary!" % word
     return returnVec
-
-def trainNB0(trainMatrix, trainCategory):
-    numTrainDocs = len(trainMatrix)
-    numWords = len(trainMatrix[0])
-    pAbusive = sum(trainCategory)/float(numTrainDocs)
-    p0Num = zeros(numWords); p1Num = zeros(numWords)
-    p0Denom = 0.0; p1Denom = 0.0
-    for i in range(numTrainDocs):
-        if trainCategory[i] == 1:
-            p1Num += trainMatrix[i]
-            p1Denom += sum(trainMatrix[i])
-        else :
-            p0Num += trainMatrix[i]
-            p0Denom += sum(trainMatrix[i])
-    p1Vect = p1Num/p1Denom      #change to log()
-    p0Vect = p0Num/p0Denom      #change to log()
-    return p0Vect, p1Vect, pAbusive
